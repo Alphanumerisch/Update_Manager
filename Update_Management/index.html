@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update-Termin wählen</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+        h1, h2 {
+            color: #bb86fc;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            background-color: #2a2a2a;
+            color: #ffffff;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #6200ea;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:disabled {
+            background-color: #444;
+            cursor: not-allowed;
+        }
+        .hidden {
+            display: none;
+        }
+        .info-box {
+            padding: 10px;
+            background-color: #2a2a2a;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Termin für Ihr Update wählen</h1>
+    <div id="update-info" class="info-box">Lade Update-Informationen...</div>
+
+    <label for="date">Datum wählen:</label>
+    <input type="date" id="date">
+
+    <label for="time">Uhrzeit wählen:</label>
+    <input type="time" id="time">
+
+    <label for="note">Notiz (optional):</label>
+    <textarea id="note" maxlength="255"></textarea>
+
+    <label><input type="checkbox" id="agb"> Ich akzeptiere die AGBs</label>
+    
+    <button id="check-time" disabled>Überprüfen</button>
+
+    <div id="response-message" class="info-box hidden"></div>
+
+    <button id="confirm" class="hidden">Termin senden</button>
+    <button id="edit" class="hidden">Bearbeiten</button>
+    <button id="contact" class="hidden">Persönlicher Kontakt</button>
+</div>
+
+<script>
+    // Token aus der URL auslesen
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    
+    if (!token) {
+        document.getElementById('update-info').innerHTML = "Fehler: Kein gültiges Token gefunden.";
+    } else {
+        fetchUpdateInfo(token);
+    }
+
+    function fetchUpdateInfo(token) {
+        fetch("/api", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "get_update_info", token: token })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.detail) {
+                document.getElementById('update-info').innerHTML = "Fehler: " + data.detail;
+            } else {
+                document.getElementById('update-info').innerHTML = 
+                    `<strong>Update:</strong> ${data.title}<br>${data.description}`;
+            }
+        });
+    }
+
+    // AGB Checkbox aktivieren
+    document.getElementById('agb').addEventListener('change', function() {
+        document.getElementById('check-time').disabled = !this.checked;
+    });
+
+    // Überprüfung der Terminwahl
+    document.getElementById('check-time').addEventListener('click', function() {
+        const date = document.getElementById('date').value;
+        const time = document.getElementById('time').value;
+
+        if (!date || !time) {
+            alert("Bitte Datum und Uhrzeit wählen.");
+            return;
+        }
+
+        fetch("/api", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "get_business_time", token: token, date: date, start_time: time })
+        })
+        .then(response => response.json())
+        .then(data => handleTimeResponse(data, date, time));
+    });
+
+    function handleTimeResponse(data, date, time) {
+        const responseBox = document.getElementById('response-message');
+        responseBox.classList.remove('hidden');
+
+        if (data.valid_timeframe) {
+            responseBox.innerHTML = "✅ Ihr Termin wurde gebucht.";
+            showConfirmButtons(true);
+        } else {
+            responseBox.innerHTML = `
+                ⚠ Ihr gewähltes Zeitfenster liegt außerhalb der regulären Öffnungszeiten.<br>
+                <strong>Zusätzliche Kosten:</strong> ${data.extra_cost} €<br>
+                Möchten Sie den Termin trotzdem buchen oder lieber einen neuen Termin wählen?`;
+            showConfirmButtons(false);
+        }
+    }
+
+    function showConfirmButtons(valid) {
+        document.getElementById('confirm').classList.remove('hidden');
+        document.getElementById('edit').classList.remove('hidden');
+        document.getElementById('contact').classList.remove('hidden');
+
+        if (valid) {
+            document.getElementById('contact').classList.add('hidden'); 
+        }
+    }
+
+    // Termin speichern
+    document.getElementById('confirm').addEventListener('click', function() {
+        const date = document.getElementById('date').value;
+        const time = document.getElementById('time').value;
+        const note = document.getElementById('note').value;
+
+        fetch("/api", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+                action: "select_date", 
+                token: token, 
+                selected_date: `${date}T${time}:00`, 
+                note: note 
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message || "Termin gespeichert!");
+            location.reload();
+        });
+    });
+
+    // Bearbeiten-Button
+    document.getElementById('edit').addEventListener('click', function() {
+        document.getElementById('response-message').classList.add('hidden');
+        document.getElementById('confirm').classList.add('hidden');
+        document.getElementById('edit').classList.add('hidden');
+        document.getElementById('contact').classList.add('hidden');
+    });
+
+    // Persönlicher Kontakt-Button
+    document.getElementById('contact').addEventListener('click', function() {
+        alert("Bitte kontaktieren Sie uns unter:\n📧 support@example.com\n📞 +49 123 456 789");
+    });
+</script>
+
+</body>
+</html>

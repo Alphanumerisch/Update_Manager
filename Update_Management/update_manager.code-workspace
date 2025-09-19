@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"uri": "vscode-remote://ssh-remote+tyrell/home/sysadmin/update_manager"
+		},
+		{
+			"uri": "vscode-remote://ssh-remote+tyrell/var/www/html"
+		}
+	],
+	"remoteAuthority": "ssh-remote+tyrell",
+	"settings": {}
+}
