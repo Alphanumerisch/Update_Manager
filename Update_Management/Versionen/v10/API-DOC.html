@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Dokumentation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: #1e1e1e;
+            padding: 20px;
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            color: #bb86fc;
+            text-align: center;
+        }
+
+        .sidebar a {
+            display: block;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            background-color: #2a2a2a;
+            border-left: 4px solid #bb86fc;
+        }
+
+        .sidebar a:hover {
+            background-color: #bb86fc;
+        }
+
+        /* Hauptbereich */
+        .container {
+            margin-left: 350px;
+            padding: 50px;
+            max-width: 900px;
+        }
+
+        h1, h2 {
+            color: #bb86fc;
+        }
+
+        pre {
+            background-color: #1a1818;
+            padding: 10px;
+            border-radius: 10px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            color: #78ee7e;
+            position: relative;
+            border-bottom:  4px solid #9c3333;
+            border-left:  4px solid #9c3333;
+            border-right:  4px solid #9c3333;
+        }
+
+
+        .copy-btn {
+            float: right;
+            background-color: #444;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+
+        .copy-btn:hover {
+            background-color: #666;
+        }
+
+        p {
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.6;
+        color: #ddd;
+        background-color: #1e1e1e;
+        padding: 10px 15px;
+        border-top: 4px solid #c92d2d;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+        }
+
+
+    </style>
+    <script>
+        function copyToClipboard(button, id) {
+            var codeBlock = document.getElementById(id).innerText;
+            navigator.clipboard.writeText(codeBlock).then(() => {
+                button.textContent = "✔ Kopiert!";
+                setTimeout(() => { button.textContent = "📋 Kopieren"; }, 2000);
+            }).catch(err => {
+                console.error("Fehler beim Kopieren: ", err);
+            });
+        }
+    </script>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>API Aktionen</h2>
+        <br>
+
+        <!-- Auth -->
+         <p>Auth</p>
+        <a href="#login">Login</a>
+        <a href="#logout">Logout</a>
+        <br>
+        
+        <!-- Customer-->
+         <p>Customer</p>
+        <a href="#add_customer">Kunde hinzufügen</a>
+        <a href="#list_customers">Kunden abrufen</a>
+        <a href="#delete_customer">Kunden löschen</a>
+        <br>
+
+        <!-- Updates-->
+         <p>Updates</p>
+        <a href="#send_updates">Updates senden</a>
+        <a href="#create_update">Update erstellen</a>
+        <a href="#list_updates">Updates abrufen</a>
+        <a href="#delete_updates">Updates löschen</a>
+        <a href="#add_c2u"> Kunde zu Update hinzufügen</a>
+        <a href="#get_update_info"> Kunden Informatioen z. Update</a>
+        <br>
+
+        <!--Settings-->
+        <p>Settings</p>
+        <a href="#set_settings">Einstellungen setzen</a>
+        <a href="#get_settings">Einstellungen abrufen</a>
+        <a href="#get_business_time">Öffnungszeiten</a>
+        <br>
+
+
+        <!--Dashboard-->
+        <p>Dashboard</p>
+        <a href="#Dashboard">Dashboard abrufen</a>
+        <br>
+
+
+        <!--User-->
+        <p>User</p>
+        <a href="#get_current_user">get_current_user</a>
+        <br>
+    </div>
+
+    <!-- Hauptbereich -->
+    <div class="container">
+        <h1>API Dokumentation</h1>
+        <p>Die API wird mit <code>/api</code> angesprochen und erwartet JSON-Requests.</p>
+
+        <!-- Login -->
+        <h2 id="login">🔹 Login</h2>
+        <button class="copy-btn" onclick="copyToClipboard(this, 'login-code')">📋 Kopieren</button>
+        <p>Request</p>
+        <pre id="login-code">{
+    "action": "login",
+    "email": "max@example.com",
+    "password": "securepassword"
+}</pre>
+<br>
+
+        <!-- Logout -->
+        <h2 id="logout">🔹 Logout</h2>
+        <button class="copy-btn" onclick="copyToClipboard(this, 'logout-code')">📋 Kopieren</button>
+        <p>Request</p>
+        <pre id="logout-code">{
+    "action": "logout",
+    "token": "abc123"
+}</pre>
+<br>
+
+        <!-- Kundenverwaltung -->
+        <h2 id="add_customer">🔹 Kunde hinzufügen</h2>
+        <button class="copy-btn" onclick="copyToClipboard(this, 'add_customer-code')">📋 Kopieren</button>
+        <p>Request</p>
+        <pre id="add_customer-code">{
+    "action": "add_customer",
+    "name": "Christian Habermehl",
+    "email": "chris@example.com",
+    "token": "abc123"
+}</pre>
+<br>
+
+        <h2 id="list_customers">🔹 Kunden abrufen</h2>
+        <button class="copy-btn" onclick="copyToClipboard(this, 'list_customers-code')">📋 Kopieren</button>
+        <p>Request</p>
+        <pre id="list_customers-code">{
+    "action": "list_customers",
+    "token": "abc123"
+}</pre>
+<br>
+
+<p>Response</p>
+<pre>[
+    {
+        "id": 1,
+        "name": "Schlosser",
+        "email": "info@schlosser.de"
+    },
+    {
+        "id": 3,
+        "name": "Stubenbordt",
+        "email": "info@stubenbordt.de"
+    },
+    {
+        "id": 21,
+        "name": "Grosshans",
+        "email": "info@grosshans.de"
+    },
+    {
+        "id": 23,
+        "name": "agrarware",
+        "email": "info@geil.de"
+    },
+    {
+        "id": 25,
+        "name": "Anna Schmidt",
+        "email": "anna@example.com"
+    },
+    {
+        "id": 26,
+        "name": "Christian Habermehl",
+        "email": "chris@ueba3ba.de"
+    },
+    {
+        "id": 27,
+        "name": "Christian Habermehl",
+        "email": "chris@ueba3baa.de"
+    }
+]</pre>
+<br>
+
+<h2 id="delete_customer">🔹 Kunde löschen</h2>
+<button class="copy-btn" onclick="copyToClipboard(this, 'delete_customer-code')">📋 Kopieren</button>
+<p>Request</p>
+<pre id="delete_customer-code">{
+    "action": "delete_customer",
+    "customer_id": "27",
+    "token": "abc123"
+        
+}</pre>
+<br>
+
+
+        <!--Updates-->
+
+
+        <h2 id="send_updates">🔹 Updates senden</h2>
+        <button class="copy-btn" onclick="copyToClipboard(this, 'send_updates-code')">📋 Kopieren</button>
+        <p>Request</p>
+        <pre id="send_updates-code">{
+    "action": "send_update",
+    "update_id": 25,
+    "token": "abc123"
+}</pre>
+<br>
+
+<h2 id="create_update">🔹 Update erstellen</h2>
+<button class="copy-btn" onclick="copyToClipboard(this, 'create_update-code')">📋 Kopieren</button>
+<p>Request</p>
+<pre id="create_update-code">{
+
+    "action": "create_updates",
+    "title": "Christians Update",
+    "description": "Neue Sicherheitsupdates für Liknux verfügbar",
+    "token": "abc123"
+}</pre>
+<br>
+
+<h2 id="list_updates">🔹 Updates ausgeben</h2>
+<button class="copy-btn" onclick="copyToClipboard(this, 'list_updates-code')">📋 Kopieren</button>
+<p>Request</p>
+<pre id="list_updates-code">{
+
+    "action": "list_updates",
+    "token": "09fc5fa8-def2-49fd-b254-fdd30883dbf1"
+    
+}</pre>
+<br>
+
+<p>Response</p>
+<pre>[
+    {
+        "id": 22,
+        "title": "Windows Server - Sicherheitsupdates",
+        "description": "Neue Sicherheitsupdates für Liknux verfügbar",
+        "updates_send": 0,
+        "customers": [
+            {
+                "id": 25,
+                "name": "Anna Schmidt",
+                "email": "anna@example.com"
+            },
+            {
+                "id": 21,
+                "name": "Grosshans",
+                "email": "info@grosshans.de"
+            },
+            {
+                "id": 23,
+                "name": "agrarware",
+                "email": "info@geil.de"
+            }
+        ]
+    },
+    {
+        "id": 23,
+        "title": "Windows Server - Sicherheitsupdates",
+        "description": "Neue Sicherheitsupdates für Liknux verfügbar",
+        "updates_send": 0,
+        "customers": [
+            {
+                "id": 23,
+                "name": "agrarware",
+                "email": "info@geil.de"
+            },
+            {
+                "id": 25,
+                "name": "Anna Schmidt",
+                "email": "anna@example.com"
+            }
+        ]
+    },
+    {
+        "id": 24,
+        "title": "Windows Server - Sicherheitsupdates",
+        "description": "Neue Sicherheitsupdates für Liknux verfügbar",
+        "updates_send": 0,
+        "customers": []
+    },
+    {
+        "id": 25,
+        "title": "Christians Update",
+        "description": "Neue Sicherheitsupdates für Liknux verfügbar",
+        "updates_send": 1,
+        "customers": [
+            {
+                "id": 26,
+                "name": "Christian Habermehl",
+                "email": "chris@ueba3ba.de"
+            }
+        ]
+    }
+]</pre>
+<br>
+
+<h2 id="delete_updates">🔹 Updates löschen</h2>
+<button class="copy-btn" onclick="copyToClipboard(this, 'delete_updates-code')">📋 Kopieren</button>
+<p>Request</p>
+<pre id="delete_updates-code">{
+
+    "action": "delete_update",
+    "update_id": "26",
+    "token": "09fc5fa8-def2-49fd-b254-fdd30883dbf1"
+    
+
+
+}</pre>
+<br>
+<h2 id="add_c2u">🔹 Kunde zu Update hinzufügen</h2>
+<button class="copy-btn" onclick="copyToClipboard(this, 'add_c2u-code')">📋 Kopieren</button>
+<p>Request</p>
+<pre id="add_c2u-code">{
+    "action": "add_customer_to_update",
+    "update_id": 25,
+    "customer_ids": [26,27],
+    "token": "09fc5fa8-def2-49fd-b254-fdd30883dbf1"
+}
+</pre>
+<br>
+
+<h2 id="get_update_info">🔹 Update Informationen für Kunde</h2>
+<button class="copy-btn" onclick="copyToClipboard(this, 'get_update_info-code')">📋 Kopieren</button>
+<p>Request</p>
+<pre id="get_update_info-code">{
+    "action": "get_update_info",
+    "token": "c08e000c-89a8-4c"
+}</pre>
+<br>
+
+<p>Response</p>
+<pre>{
+    "title": "Christians Update",
+    "description": "Neue Sicherheitsupdates für Liknux verfügbar",
+    "customer_name": "Christian Habermehl",
+    "date_is_set": true,
+    "selected_date": "2025-01-29T09:54:00"
+}</pre>
+<br>
+
+        <!-- Einstellungen -->
+        <h2 id="set_settings">🔹 Einstellungen setzen</h2>
+        <p>E-Mail Einstellugen</p>
+        <button class="copy-btn" onclick="copyToClipboard(this, 'set_email_settings-code')">📋 Kopieren</button>
+        <p>Request</p>
+        <pre id="set_email_settings-code">{
+    "action": "set_settings",
+    "settings": "email_settings",
+    "new_settings": {
+        "smtp_server": "smtp.example.com",
+        "smtp_server_port": 587,
+        "smtp_user": "user@example.com",
+        "smtp_pw": "securepassword",
+        "sender_mail": "noreply@example.com"
+    },
+
+    "token": "abc123"
+}</pre>
+<br>
+
+<p>Extra Kosten</p>
+<button class="copy-btn" onclick="copyToClipboard(this, 'set_extra_cost_settings-code')">📋 Kopieren</button>
+<p>Request</p>
+<pre id="set_extra_cost_settings-code">{
+    
+    "action": "set_settings",
+    "settings": "extra_costs",
+    "new_settings": {
+    "extra_cost": "150" 
+    },
+    
+    "token": "abc123"
+}</pre>
+<br>
+
+<p>Öffungszeiten</p>
+<button class="copy-btn" onclick="copyToClipboard(this, 'set_business_hours_settings-code')">📋 Kopieren</button>
+<p>Request</p>
+<pre id="set_business_hours_settings-code">{
+    "action": "set_settings",
+    "settings": "business_time",
+    "new_settings": {
+        "days": [
+            {
+                "day_of_week": "Montag",
+                "open_time": "08:00",
+                "close_time": "17:00",
+                "is_open": 1
+            },
+            {
+                "day_of_week": "Dienstag",
+                "open_time": "08:00",
+                "close_time": "17:00",
+                "is_open": 1
+            },
+            {
+                "day_of_week": "Mittwoch",
+                "open_time": "08:00",
+                "close_time": "17:00",
+                "is_open": 1
+            },
+            {
+                "day_of_week": "Donnerstag",
+                "open_time": "08:00",
+                "close_time": "17:00",
+                "is_open": 1
+            },
+            {
+                "day_of_week": "Freitag",
+                "open_time": "08:00",
+                "close_time": "17:00",
+                "is_open": 1
+            },
+            {
+                "day_of_week": "Samstag",
+                "open_time": "00:00",
+                "close_time": "00:00",
+                "is_open": 0
+            },
+            {
+                "day_of_week": "Sonntag",
+                "open_time": "00:00",
+                "close_time": "00:00",
+                "is_open": 0
+            }
+        ]
+    },
+
+    "token": "09fc5fa8-def2-49fd-b254-fdd30883dbf1"
+}
+</pre>
+<br>
+
+        <h2 id="get_settings">🔹 Einstellungen abrufen</h2><br>
+    <p>E-Mail Einstelungen </p>
+        <button class="copy-btn" onclick="copyToClipboard(this, 'get_email_settings-code')">📋 Kopieren</button>
+        <p>Request</p>
+        <pre id="get_email_settings-code">{
+    "action": "get_settings",
+    "settings": "email_settings",
+
+    "token": "abc123"
+}</pre>
+
+<p>Response</p>
+<pre>{
+    "smtp_server": "ueba3ba.de",
+    "smtp_server_port": 587,
+    "smtp_user": "send-mail@ueba3ba.de",
+    "sender_mail": "update@ueba3ba.de"
+}</pre>
+<br>
+
+<p>Extra-Kosten Einstellungen </p>
+        <button class="copy-btn" onclick="copyToClipboard(this, 'get_extra_cost_settings-code')">📋 Kopieren</button>
+        <p>Request</p>
+        <pre id="get_extra_cost_settings-code">{
+    "action": "get_settings",
+    "settings": "extra_costs",
+    "token": "abc123"
+}</pre>
+<p>Response</p>
+<pre>{
+    "extra_cost": "179"
+}</pre>
+
+
+<br>
+
+<p>Öffnungszeiten Einstellungen </p>
+        <button class="copy-btn" onclick="copyToClipboard(this, 'get_business_hours_settings-code')">📋 Kopieren</button>
+        <p>Request</p>
+        <pre id="get_business_hours_settings-code">{
+        "action": "get_settings",
+        "settings": "business_time",
+        "token": "09fc5fa8-def2-49fd-b254-fdd30883dbf1"
+}</pre>
+
+<p>Response</p>
+<pre>[
+    {
+        "day_of_week": "Montag",
+        "open_time": "09:00",
+        "close_time": "18:00",
+        "is_open": 1
+    },
+    {
+        "day_of_week": "Dienstag",
+        "open_time": "09:00",
+        "close_time": "18:00",
+        "is_open": 1
+    },
+    {
+        "day_of_week": "Mittwoch",
+        "open_time": "09:00",
+        "close_time": "18:00",
+        "is_open": 1
+    },
+    {
+        "day_of_week": "Donnerstag",
+        "open_time": "09:00",
+        "close_time": "18:00",
+        "is_open": 1
+    },
+    {
+        "day_of_week": "Freitag",
+        "open_time": "09:00",
+        "close_time": "18:00",
+        "is_open": 1
+    },
+    {
+        "day_of_week": "Samstag",
+        "open_time": "00:00",
+        "close_time": "00:00",
+        "is_open": 0
+    },
+    {
+        "day_of_week": "Sonntag",
+        "open_time": "00:00",
+        "close_time": "00:00",
+        "is_open": 0
+    }
+]</pre>
+
+
+<br>
+
+    <h2 id="get_business_time">🔹 Öffnungszeiten</h2>
+    <button class="copy-btn" onclick="copyToClipboard(this, 'get_business_time-code')">📋 Kopieren</button>
+    <p>Request</p>
+    <pre id="get_business_time-code">{
+    "action": "get_business_time",
+    "token": "abc123",
+    "date": "2025-02-21",
+    "start_time": "19:30"
+}</pre>
+
+<p>Response</p>
+<pre>{
+    "requested_time": {
+    "date": "2025-02-21",
+    "start_time": "20:30",
+    "valid_timeframe": false
+    },
+
+    "message": "Ihr gewähltes Zeitfenster liegt außerhalb der regulären Öffnungszeiten.",
+    "extra_cost": 179.0
+}</pre>
+<br>
+<p>Response</p>
+<pre>{
+    "requested_time": {
+    "date": "2025-02-21",
+    "start_time": "14:30",
+    "valid_timeframe": true
+    },
+    "message": "Ihr Termin wurde gebucht."
+}</pre>
+<br>
+
+
+<h2 id="Dashboard">🔹 Dashboard</h2>
+<button class="copy-btn" onclick="copyToClipboard(this, 'dashboard-code')">📋 Kopieren</button>
+<p>Request</p>
+<pre id="dashboard-code">{
+
+    "action": "dashboard",
+    "token": "09fc5fa8-def2-49fd-b254-fdd30883dbf1"
+    
+}</pre>
+
+<p>Response</p>
+<pre>[
+    {
+        "update_id": 22,
+        "title": "Windows Server - Sicherheitsupdates",
+        "description": "Neue Sicherheitsupdates für Liknux verfügbar",
+        "name": "Anna Schmidt",
+        "email": "anna@example.com",
+        "status": "offen",
+        "selected_date": null,
+        "note": null
+    },
+    {
+        "update_id": 22,
+        "title": "Windows Server - Sicherheitsupdates",
+        "description": "Neue Sicherheitsupdates für Liknux verfügbar",
+        "name": "Grosshans",
+        "email": "info@grosshans.de",
+        "status": "offen",
+        "selected_date": null,
+        "note": null
+    },
+    {
+        "update_id": 22,
+        "title": "Windows Server - Sicherheitsupdates",
+        "description": "Neue Sicherheitsupdates für Liknux verfügbar",
+        "name": "agrarware",
+        "email": "info@geil.de",
+        "status": "offen",
+        "selected_date": null,
+        "note": null
+    },
+    {
+        "update_id": 23,
+        "title": "Windows Server - Sicherheitsupdates",
+        "description": "Neue Sicherheitsupdates für Liknux verfügbar",
+        "name": "agrarware",
+        "email": "info@geil.de",
+        "status": "bestätigt",
+        "selected_date": "2024-03-15T10:00:50",
+        "note": "Bitte um Rückmeldung wenn die Updates fertig sind"
+    },
+    {
+        "update_id": 23,
+        "title": "Windows Server - Sicherheitsupdates",
+        "description": "Neue Sicherheitsupdates für Liknux verfügbar",
+        "name": "Anna Schmidt",
+        "email": "anna@example.com",
+        "status": "offen",
+        "selected_date": null,
+        "note": null
+    },
+    {
+        "update_id": 25,
+        "title": "Christians Update",
+        "description": "Neue Sicherheitsupdates für Liknux verfügbar",
+        "name": "Christian Habermehl",
+        "email": "chris@ueba3ba.de",
+        "status": "offen",
+        "selected_date": null,
+        "note": null
+    }
+]</pre>
+<br>
+
+<h2 id="get_current_user">🔹 Einen Benutzer abrufen</h2>
+    <button class="copy-btn" onclick="copyToClipboard(this, 'get_current_user-code')">📋 Kopieren</button>
+    <p>Request</p>
+    <pre id="get_current_user-code">{
+    "action": "get_current_user",
+    "token": "09fc5fa8-def2-49fd-b254-fdd30883dbf1"
+        
+}</pre>
+
+<p>Response</p>
+<pre>{
+    "id": 1,
+    "name": "Max Mustermann",
+    "email": "max@example.com"
+}</pre>
+<br>
+
+
+    </div>
+
+</body>
+</html>

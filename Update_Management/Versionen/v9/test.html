@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+    <html lang="de">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Terminbuchung - {update_title}</title>
+        <style>
+            body {{ font-family: Arial, sans-serif; background-color: #f8f9fa; text-align: center; padding: 20px; }}
+            .container {{ background: white; padding: 20px; border-radius: 10px; max-width: 400px; margin: auto; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }}
+            input, button {{ margin-top: 10px; width: 100%; padding: 8px; font-size: 16px; }}
+            button:disabled {{ background-color: #cccccc; cursor: not-allowed; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h2>Willkommen, {customer_name}!</h2>
+            <p>Sie haben ein neues Update erhalten:</p>
+            <h3>{update_title}</h3>
+            <p>{update_description}</p>
+
+            <label>Wählen Sie ein Datum:</label>
+            <input type="date" id="date">
+            
+            <label>Wählen Sie eine Uhrzeit:</label>
+            <input type="time" id="time">
+
+            <br>
+            <input type="checkbox" id="agb"> Ich akzeptiere die AGBs
+
+            <br><br>
+            <button id="sendButton" disabled onclick="submitDate()">Termin senden</button>
+        </div>
+
+        <script>
+            // AGB-Checkbox überwachen
+            document.getElementById("agb").addEventListener("change", function() {{
+                document.getElementById("sendButton").disabled = !this.checked;
+            }});
+
+            // Termin senden
+            function submitDate() {{
+                const date = document.getElementById("date").value;
+                const time = document.getElementById("time").value;
+                if (!date || !time) {{
+                    alert("Bitte Datum und Uhrzeit auswählen!");
+                    return;
+                }}
+
+                fetch("http://example.com/api", {{
+                    method: "POST",
+                    headers: {{ "Content-Type": "application/json" }},
+                    body: JSON.stringify({{
+                        action: "select_date",
+                        token: "{token}",
+                        date: date,
+                        time: time
+                    }})
+                }})
+                .then(response => response.json())
+                .then(data => alert(data.message || "Termin erfolgreich gespeichert!"))
+                .catch(error => alert("Fehler beim Speichern des Termins!"));
+            }}
+        </script>
+    </body>
+    </html>

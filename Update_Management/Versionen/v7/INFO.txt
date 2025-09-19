@@ -1,0 +1,8 @@
+✅ Authentifizierung funktioniert
+✅ Login funktioniert
+✅ Benutzerinformationen abrufen funktioniert
+✅ Kunden hinzufügen & abrufen funktioniert
+✅ Updates & Dashboard abrufen funktioniert
+✅ Updates an Kunden senden funktioniert
+✅ Kunden und Updates löschen funktioniert
+✅ Logout funktioniert

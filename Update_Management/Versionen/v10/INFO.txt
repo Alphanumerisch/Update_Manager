@@ -1,0 +1,34 @@
+API Version 11 – Zusammenfassung der Erweiterungen und Änderungen
+🔹 Datenbank-Erweiterungen
+1️⃣ Neue Tabelle: opening_hours
+Speichert die Öffnungszeiten.
+Verknüpft mit der Tabelle settings, um verschiedene Kategorien von Einstellungen zu unterstützen.
+2️⃣ Tabelle users erweitert
+Neue Spalte: role
+Dient zur Vergabe von Benutzerrechten (Admin, Benutzer, Viewer).
+3️⃣ Tabelle settings erweitert
+Neue Spalten: key, value
+Unterstützt nun Schlüssel-Wert-Paare für flexible Konfigurationen.
+4️⃣ Neue Kategorie in settings eingefügt
+Category: appointment_settings
+Speichert zusätzliche Kosten für Termine in der Spalte key (extra_cost) und den Wert in der Spalte value.
+🛠 API-Funktionen & Änderungen
+✅ set_settings & get_settings erweitert
+Unterstützen jetzt die Verwaltung der Öffnungszeiten.
+Damit können Administratoren die Business Hours direkt über die API setzen und abrufen.
+✅ Neue API-Aktion: get_business_time
+Prüft, ob eine gewählte Datum-Uhrzeit-Kombination innerhalb der Geschäftszeiten liegt.
+Gibt ein JSON-Response mit valid_timeframe: true/false zurück.
+Falls außerhalb der Öffnungszeiten: Gibt die zusätzlichen Kosten (extra_cost) aus der settings-Tabelle zurück.
+✅ Neue API-Aktion: get_update_info
+Holt Informationen zu einem Kunden-Update anhand des Update-Tokens.
+Wird von der Terminbuchungs-Webseite verwendet, um dem Kunden Informationen über das Update anzuzeigen.
+Prüft zusätzlich, ob bereits ein Termin gesetzt wurde (date_is_set: true/false).
+🌍 Webseite für die Terminbuchung erstellt
+Dynamische HTML/JavaScript-Webseite, die:
+Kunden anhand ihres Update-Tokens erkennt.
+Verfügbare Öffnungszeiten prüft (get_business_time).
+Terminbuchungen speichert (select_date).
+Bereits gesetzte Termine anzeigt und Optionen zum Ändern oder Beibehalten bietet.
+🚀 Fazit
+Version 11 bringt wichtige Datenbank-Erweiterungen, neue API-Methoden für Terminprüfung und eine dynamische Buchungs-Webseite. Die neuen Funktionen verbessern die Verwaltung der Termine und machen die API noch flexibler für zukünftige Erweiterungen. 🎯

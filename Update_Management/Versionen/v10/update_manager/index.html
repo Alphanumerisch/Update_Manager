@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update-Termin wählen</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+        h1, h2 {
+            color: #bb86fc;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            background-color: #2a2a2a;
+            color: #ffffff;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #6200ea;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:disabled {
+            background-color: #444;
+            cursor: not-allowed;
+        }
+        .hidden {
+            display: none;
+        }
+        .info-box {
+            padding: 10px;
+            background-color: #2a2a2a;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 400px;
+        }
+        .modal button {
+            width: 45%;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="main-container">
+    <h1>Termin für Ihr Update wählen</h1>
+    <div id="update-info" class="info-box">Lade Update-Informationen...</div>
+
+    <div id="appointment-form">
+        <label for="date">Datum wählen:</label>
+        <input type="date" id="date">
+
+        <label for="time">Uhrzeit wählen:</label>
+        <input type="time" id="time">
+
+        <label for="note">Notiz (optional):</label>
+        <textarea id="note" maxlength="255"></textarea>
+
+        <label><input type="checkbox" id="agb"> Ich akzeptiere die AGBs</label>
+        
+        <button id="check-time" disabled>Überprüfen</button>
+
+        <div id="response-message" class="info-box hidden"></div>
+
+        <button id="confirm" class="hidden">Termin senden</button>
+        <button id="edit" class="hidden">Bearbeiten</button>
+        <button id="contact" class="hidden">Persönlicher Kontakt</button>
+    </div>
+</div>
+
+<div class="modal" id="existing-date-modal">
+    <div class="modal-content">
+        <p id="existing-date-text">Sie haben bereits einen Termin am:</p>
+        <button id="keep-date">Beibehalten</button>
+        <button id="change-date">Ändern</button>
+    </div>
+</div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+
+    if (!token) {
+        showError("Fehler: Kein gültiges Token gefunden.");
+    } else {
+        fetchUpdateInfo(token);
+    }
+
+    function fetchUpdateInfo(token) {
+        fetch("/api", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "get_update_info", token: token })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.detail) {
+                showError(`Fehler: ${data.detail}`);
+            } else {
+                document.getElementById('update-info').innerHTML = 
+                    `<strong>Update:</strong> ${data.title}<br>${data.description}`;
+
+                if (data.date_is_set) {
+                    showExistingDateModal(data.selected_date);
+                }
+            }
+        })
+        .catch(() => {
+            showError("Interner Fehler. Bitte versuchen Sie es später erneut.");
+        });
+    }
+
+    function showError(message) {
+        document.getElementById("main-container").innerHTML = `
+            <h1>Fehlermeldung</h1>
+            <p>${message}</p>
+        `;
+    }
+
+    function showExistingDateModal(selectedDate) {
+        document.getElementById("existing-date-text").innerHTML = 
+            `Sie haben bereits einen Termin am:<br><strong>${selectedDate}</strong><br>Was möchten Sie tun?`;
+        
+        document.getElementById("existing-date-modal").style.display = "flex";
+
+        document.getElementById("keep-date").addEventListener("click", function() {
+            document.getElementById("existing-date-modal").style.display = "none";
+            document.getElementById("main-container").innerHTML = `
+                <h1>Ihr Termin ist bereits gesetzt</h1>
+                <p>Sie können das Fenster jetzt schließen.</p>`;
+        });
+
+        document.getElementById("change-date").addEventListener("click", function() {
+            document.getElementById("existing-date-modal").style.display = "none";
+        });
+    }
+
+    // ✅ Fix für den "Überprüfen"-Button
+    document.getElementById('agb').addEventListener('change', function() {
+        document.getElementById('check-time').disabled = !this.checked;
+    });
+
+    document.getElementById('check-time').addEventListener('click', function() {
+        const date = document.getElementById('date').value;
+        const time = document.getElementById('time').value;
+
+        if (!date || !time) {
+            alert("Bitte Datum und Uhrzeit wählen.");
+            return;
+        }
+
+        fetch("/api", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "get_business_time", token: token, date: date, start_time: time })
+        })
+        .then(response => response.json())
+        .then(data => handleTimeResponse(data));
+    });
+
+    function handleTimeResponse(data) {
+        const responseBox = document.getElementById('response-message');
+        responseBox.classList.remove('hidden');
+
+        let extraCost = data.extra_cost ? `${data.extra_cost} €` : "Keine Zusatzkosten";
+
+        if (data.requested_time.valid_timeframe) {
+            responseBox.innerHTML = "✅ Ihr Termin kann gebucht werden, bitte bestätigen.";
+            showConfirmButtons(true);
+        } else {
+            responseBox.innerHTML = `
+                ⚠ Ihr gewähltes Zeitfenster liegt außerhalb der regulären Öffnungszeiten.<br>
+                <strong>Zusätzliche Kosten:</strong> ${extraCost}<br>
+                Möchten Sie den Termin trotzdem buchen oder lieber einen neuen Termin wählen?`;
+            showConfirmButtons(false);
+        }
+    }
+
+    function showConfirmButtons(valid) {
+    const confirmBtn = document.getElementById('confirm');
+    const editBtn = document.getElementById('edit');
+    const contactBtn = document.getElementById('contact');
+
+    confirmBtn.classList.remove('hidden');
+    editBtn.classList.remove('hidden');
+
+    if (!valid) {
+        contactBtn.classList.remove('hidden');
+    } else {
+        contactBtn.classList.add('hidden');
+    }
+
+    // **Neue Event Listener setzen, nachdem die Buttons sichtbar sind**
+    confirmBtn.addEventListener('click', confirmAppointment);
+    editBtn.addEventListener('click', editAppointment);
+    contactBtn.addEventListener('click', contactSupport);
+}
+
+function confirmAppointment() {
+    const date = document.getElementById('date').value;
+    const time = document.getElementById('time').value;
+    const note = document.getElementById('note').value;
+
+    fetch("/api", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+            action: "select_date", 
+            token: token, 
+            selected_date: `${date}T${time}:00`, 
+            note: note 
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message || "Termin gespeichert!");
+        location.reload();
+    });
+}
+
+function editAppointment() {
+    document.getElementById('response-message').classList.add('hidden');
+    document.getElementById('confirm').classList.add('hidden');
+    document.getElementById('edit').classList.add('hidden');
+    document.getElementById('contact').classList.add('hidden');
+}
+
+function contactSupport() {
+    alert("Bitte kontaktieren Sie uns unter:\n📧 support@example.com\n📞 +49 123 456 789");
+}
+
+</script>
+
+</body>
+</html>

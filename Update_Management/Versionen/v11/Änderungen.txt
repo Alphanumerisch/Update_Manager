@@ -1,0 +1,18 @@
+17.02.2025 um 19:35
+
+Function formatedDateTime in die Index.html eingeügt
+
+Formatiert:> 2025-01-29T09:54:00 zu 29.01.2025 um 9:54:00 Uhr
+
+18.02.2025 um 14:00
+
+Datenbank Tokens für Login durch JWT Tokens ersetzt.
+Rollenzuweisung für Benutzer hinzugefügt
+
+Tabelle updates um die Spalte creator_id erweitert
+
+Function delete_update angepasst:
+
+Updates dürfen nur von einem Admin oder dem Ersteller des jeweiligen Updates, das gelöscht werden soll, gelöscht werden.
+
+Datenbankschema angepasst
