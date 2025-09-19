@@ -1,0 +1,120 @@
+📌 API Version v9 – Funktionsübersicht & Änderungen
+Diese Version (v9) der API bringt zahlreiche Erweiterungen und Optimierungen mit sich. Hier ist eine detaillierte Zusammenfassung aller Funktionen und Erweiterungen, inklusive Erklärungen.
+
+✅ Authentifizierung & Sicherheit
+🔹 Was wurde implementiert?
+
+Nutzer müssen sich mit E-Mail und Passwort anmelden (login).
+Ein Token wird generiert und in der Datenbank gespeichert.
+Token-Überprüfung für geschützte API-Aufrufe (get_current_user prüft, ob ein Nutzer eingeloggt ist).
+Nutzer können sich abmelden (logout), wodurch ihr Token ungültig wird.
+💡 Warum ist das wichtig?
+➡️ Ohne Authentifizierung hätten alle Nutzer vollen Zugriff auf die API. Durch Token-Validierung können nur autorisierte Benutzer Änderungen vornehmen.
+
+✅ Login & Logout funktionieren
+🔹 Was wurde implementiert?
+
+Nutzer können sich mit ihrer E-Mail & Passwort anmelden (login).
+Nach dem Login erhalten sie ein Token, das für weitere API-Anfragen benötigt wird.
+Beim Logout (logout) wird das Token ungültig gemacht und in die invalid_tokens-Tabelle eingetragen.
+💡 Warum ist das wichtig?
+➡️ So wird sichergestellt, dass sich nur berechtigte Benutzer anmelden können. Zudem verhindert es Missbrauch durch abgelaufene oder gestohlene Tokens.
+
+✅ Benutzerinformationen abrufen
+🔹 Was wurde implementiert?
+
+Mit get_current_user können angemeldete Nutzer ihre Informationen abrufen.
+Wird das Token als ungültig erkannt, erhält der Nutzer einen Fehler (401 Unauthorized).
+💡 Warum ist das wichtig?
+➡️ Erlaubt es dem Nutzer, seine Anmeldedaten zu überprüfen und sicherzustellen, dass er eingeloggt ist.
+
+✅ Kundenverwaltung (Hinzufügen, Abrufen, Löschen)
+🔹 Was wurde implementiert?
+
+Kunden können hinzugefügt werden (add_customer).
+Eine Liste aller Kunden kann abgerufen werden (list_customers).
+Kunden können gelöscht werden (delete_customer).
+💡 Warum ist das wichtig?
+➡️ Ein zentraler Bestandteil der API, da Nutzer so Kunden verwalten und gezielt Daten organisieren können.
+
+✅ Updates & Dashboard abrufen
+🔹 Was wurde implementiert?
+
+Nutzer können eine Liste aller Updates abrufen (list_updates).
+Das dashboard gibt eine Übersicht über Kunden & ihre Updates zurück.
+💡 Warum ist das wichtig?
+➡️ Unternehmen oder Nutzer können ihre Änderungen verwalten und nachvollziehen, welche Updates an Kunden gesendet wurden.
+
+✅ Updates an Kunden senden
+🔹 Was wurde implementiert?
+
+Mit send_update kann ein Update an Kunden versendet werden.
+Jeder Kunde bekommt einen individuellen Link mit einem Token.
+Das Token wird jetzt aus der Datenbank abgerufen (statt jedes Mal neu generiert zu werden).
+SMTP-Einstellungen werden aus der Datenbank geladen, sodass die E-Mails mit den gespeicherten Konfigurationen versendet werden.
+💡 Warum ist das wichtig?
+➡️ Jetzt können Updates einfacher und sicherer an Kunden gesendet werden, und es wird sichergestellt, dass bestehende Tokens genutzt werden.
+
+✅ Kunden und Updates löschen
+🔹 Was wurde implementiert?
+
+delete_customer entfernt einen Kunden aus der Datenbank.
+delete_update löscht ein Update, inklusive der Kunden-Verknüpfungen.
+💡 Warum ist das wichtig?
+➡️ Verhindert eine Überfüllung der Datenbank und ermöglicht es, alte oder falsche Einträge zu entfernen.
+
+✅ Neue Action: add_customer_to_update
+🔹 Was wurde implementiert?
+
+Nutzer können nachträglich Kunden einem Update zuweisen.
+Wenn customer_updates bereits einen Eintrag für einen Kunden hat, wird kein doppelter Eintrag erzeugt.
+💡 Warum ist das wichtig?
+➡️ Vorher konnte ein Update nur einmalig versendet werden. Jetzt ist es möglich, nachträglich neue Kunden hinzuzufügen.
+
+✅ Erweiterung der Action list_updates
+🔹 Was wurde geändert?
+
+list_updates gibt nun auch eine Liste der zugeordneten Kunden zu jedem Update aus.
+💡 Warum ist das wichtig?
+➡️ Vorher wurden nur Updates angezeigt. Jetzt können Nutzer direkt sehen, welche Kunden ein bestimmtes Update erhalten haben.
+
+✅ Neue Actions: get_settings & set_settings
+🔹 Was wurde implementiert?
+
+get_settings: Holt die gespeicherten Einstellungen aus der Datenbank, z. B. SMTP-Server für E-Mails.
+set_settings: Ermöglicht es Admins, die Einstellungen für verschiedene API-Funktionen zu aktualisieren.
+💡 Warum ist das wichtig?
+➡️ Damit können Einstellungen zentral verwaltet werden, ohne dass der Code geändert werden muss.
+
+✅ Neue Action: send_updates (E-Mails mit gespeicherten Tokens senden)
+🔹 Was wurde implementiert?
+
+Holt die E-Mail-Einstellungen automatisch aus der Datenbank.
+Holt vorhandene Tokens aus der customer_updates-Tabelle statt jedes Mal neue zu generieren.
+Sendet nur E-Mails an Kunden, die mit einem Update verknüpft sind und ein gültiges Token haben.
+Setzt updates_send = 1, sobald alle E-Mails gesendet wurden.
+💡 Warum ist das wichtig?
+➡️ Jetzt wird sichergestellt, dass kein doppeltes Token generiert wird und nur Kunden mit verknüpften Updates eine Benachrichtigung erhalten.
+
+✅ Datenbank-Erweiterungen
+1️⃣ updates-Tabelle
+Eine neue Spalte updates_send wurde hinzugefügt.
+Diese Spalte zeigt an, ob ein Update bereits an alle Kunden versendet wurde (0 = nicht gesendet, 1 = gesendet).
+2️⃣ settings-Tabelle
+Eine zentrale settings-Tabelle wurde erstellt, um API-Konfigurationen zu speichern.
+3️⃣ email_settings-Tabelle
+Diese ist mit der settings-Tabelle verknüpft und speichert:
+smtp_server (E-Mail-Server)
+smtp_server_port (Port für SMTP)
+smtp_user (E-Mail-Benutzername)
+smtp_pw (Passwort)
+sender_mail (Absender-Adresse)
+💡 Warum ist das wichtig?
+➡️ Alle API- und E-Mail-Einstellungen sind jetzt dynamisch über die API änderbar.
+
+📌 Fazit & Bedeutung der v9-Version
+Die Version 9 bringt: ✔ Komplette Authentifizierung & Sicherheit
+✔ Vollständige Kundenverwaltung
+✔ Umfassende Update-Funktionalität
+✔ Dynamische Konfigurationsverwaltung für E-Mail & API-Einstellungen
+✔ Optimierte E-Mail-Benachrichtigungen mit bereits gespeicherten Tokens

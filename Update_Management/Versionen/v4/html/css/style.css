@@ -1,0 +1,280 @@
+/* ==================== Allgemeine Stile ==================== */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+header {
+    background-color: #007bff;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    font-size: 24px;
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    background-color: #0056b3;
+    padding: 10px;
+}
+
+nav button {
+    background-color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+nav button:hover {
+    background-color: #ddd;
+}
+
+main {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+}
+
+p {
+    text-align: center;
+    font-size: 18px;
+}
+
+/* ==================== Tabellen-Stil ==================== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: auto;
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 12px;
+    text-align: center;
+    min-width: 150px;
+}
+
+/* Tabellen-Kopf */
+th {
+    background-color: #007bff;
+    color: white;
+    font-size: 16px;
+}
+
+/* Stil für Datum-Buttons */
+.date-button {
+    background-color: #28a745;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.date-button:hover {
+    background-color: #218838;
+}
+
+/* Abstand zwischen Tabellen */
+h3 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #333;
+}
+
+/* ==================== Kundenbereich ==================== */
+.customer-cell {
+    border: 2px solid #007bff;
+    padding: 12px;
+    text-align: center;
+    min-width: 180px;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+}
+
+/* Header für jeden Kunden */
+.customer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+/* Inhalt der Kundenbox */
+.customer-content {
+    padding: 10px;
+}
+
+/* ==================== Kundenformular (Overlay) ==================== */
+/* ==================== Overlay-Hintergrund ==================== */
+.overlay {
+    display: none; /* Standardmäßig versteckt */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Halbtransparent */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Über alles legen */
+}
+
+/* ==================== Kundenformular ==================== */
+.customer-form {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    width: 350px;
+    max-width: 90%;
+    position: relative;
+    border: 2px solid #007bff;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* ==================== Animation ==================== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Rahmen & Titel */
+.customer-form h3 {
+    margin-bottom: 15px;
+    font-size: 20px;
+    color: #333;
+}
+
+/* Eingabefelder */
+.customer-form input {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+/* ==================== Buttons ==================== */
+.form-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    gap: 10px; /* Abstand zwischen Buttons */
+    width: 100%; /* Damit die Buttons gleichmäßig Platz haben */
+}
+
+
+/* Einheitliche Buttons */
+.form-buttons button {
+    flex: 1;
+    background: #007bff;
+    color: white;
+    max-width: 120px; /* Falls du eine Begrenzung möchtest */
+    border: none;
+    padding: 12px 15px;
+    text-align: center;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    max-width: 120px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+}
+
+/* Hover-Effekt */
+.form-buttons button:hover {
+    background: #0056b3;
+}
+
+/* Abbrechen-Button */
+.form-buttons button:last-child {
+    background: #6c757d;
+}
+
+.form-buttons button:last-child:hover {
+    background: #5a6268;
+}
+
+/* ==================== "+ Kunde" Button ==================== */
+.add-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-button:hover {
+    background-color: #218838;
+}
+
+/* ==================== Löschen-Buttons (Rot) ==================== */
+.delete-button {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    gap: 10px; /* Abstand zwischen Buttons */
+    width: 100%; /* Damit die Buttons gleichmäßig Platz haben */
+    background-color: #e01d1d; /* Rotes Design */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 5px;
+    transition: background 0.2s ease-in-out;
+}
+
+.delete-button:hover {
+    background-color: #c82333; /* Dunkleres Rot beim Hover */
+}
+
+.edit-button {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    gap: 10px; /* Abstand zwischen Buttons */
+    width: 100%; /* Damit die Buttons gleichmäßig Platz haben */
+    background-color: #28a745; /* Rotes Design */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 5px;
+    transition: background 0.2s ease-in-out;
+}
+
+.edit-button:hover {
+    background-color: #387547; /* Dunkleres Rot beim Hover */
+}

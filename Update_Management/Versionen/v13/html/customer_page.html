@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update-Termin wählen</title>
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+
+        .center-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #1eff0021;
+            color: white;
+            padding: 20px;
+            max-width: 500px;
+            margin: auto;
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: 0 0 35px rgba(63, 199, 29, 0.849);
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            font-size: 120% ;
+        }
+
+        .center-box button:hover {
+            background-color: rgb(50, 182, 38); /* Ändert die Farbe beim Hover */
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            background-color: #394437;
+            padding: 50px;
+            border-radius: 75px;
+            box-shadow: 0 0 10px rgba(97, 146, 84, 0.849);
+            
+        }
+        h1, h2 {
+            color: #e0dfe6;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 15px;
+            background-color: #2a2a2a;
+            color: #ffffff;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #00ea6256;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:disabled {
+            background-color: #444;
+            cursor: not-allowed;
+        }
+        .hidden {
+            display: none;
+        }
+        .info-box {
+            padding: 10px;
+            background-color: #2a2a2a;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 120%;
+        }
+        .modal {
+            display: none;
+            position:fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            
+            
+        }
+        .modal-content {
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            font-size: 120%;
+            background-color: #000000; 
+            box-shadow: 0 0 35px rgba(63, 199, 29, 0.849);
+            
+
+        }
+        .modal button {
+            width: 50%;
+            margin: 10px;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            font-size: 125%;
+            
+        }
+        .modal button:hover {
+            background-color: rgb(50, 182, 38); /* Ändert die Farbe beim Hover */
+            
+        }
+
+        .logo {
+            position: absolute;
+            top:20px;
+            left: 20px;
+            width: 220px; /* Größe des Logos anpassen */
+            height: auto;
+        }
+        #note {
+                width: 500px;       /* Standardbreite */
+                height: 50px;      /* Standardhöhe */
+                min-height: 50px;
+                min-width: 500px;
+                max-width: 500px;   /* Maximale Breite */
+                max-height: 50px;  /* Maximale Höhe */
+                resize: both;       /* Ermöglicht das Vergrößern in beide Richtungen */
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #2a2a2a;
+            color: #ffffff;
+            text-align: center;
+            font-size: 125%;
+        }
+        .input-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .input-container input {
+            width: 100%;
+            padding: 10px;
+            padding-right: 40px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            background-color: #0000006e;
+            color: #ffffff;
+            text-align: center;
+        }
+        .input-container i {
+            position: absolute;
+            right: 15px;
+            color: #ffffff;
+            pointer-events: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <img src="/img/logo.png" alt="Firmenlogo" class="logo">
+
+
+    
+<div class="center-box" id="main-container">
+    <h1>Termin für Ihr Update wählen</h1><br>
+    <div id="update-info" class="info-box">Lade Update-Informationen...</div>
+
+    <div id="appointment-form">
+        <label for="date">Datum wählen:</label>
+        <div class="input-container">
+            <input type="text" id="date" placeholder="Datum auswählen...">
+            <i class="fa fa-calendar"></i>
+        </div>
+
+        <label for="time">Uhrzeit wählen:</label>
+        <div class="input-container">
+            <input type="text" id="time" placeholder="Uhrzeit auswählen...">
+            <i class="fa fa-clock"></i>
+        </div>
+    </div>
+
+        <label for="note">Notiz (optional):</label>
+        <textarea id="note" maxlength="255"></textarea>
+
+        <label><input type="checkbox" id="agb"> Ich akzeptiere die AGBs</label>
+        
+        <button id="check-time" disabled>Überprüfen</button>
+
+        <div id="response-message" class="info-box hidden"></div>
+
+        <button id="confirm" class="hidden">Termin senden</button>
+        <button id="edit" class="hidden">Bearbeiten</button>
+        <button id="contact" class="hidden">Persönlicher Kontakt</button>
+    </div>
+</div>
+
+<div class="modal" id="existing-date-modal">
+    <div class="modal-content">
+        <p id="existing-date-text"></p>
+        <button id="keep-date">Beibehalten</button>
+        <button id="change-date">Ändern</button>
+    </div>
+</div>
+
+<div class="modal" id="termin-info">
+    <div class="modal-content">
+        <p id="existing-date-text"></p>
+        <label><input type="checkbox" id="agb"> Ich akzeptiere die Extra-Kosten</label>
+        <button id="keep-date">Senden</button>
+        <button id="change-date">Ändern</button>
+    </div>
+</div>
+
+<!-- Flatpickr JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    flatpickr("#date", {
+        dateFormat: "Y-m-d",
+        minDate: "today",
+        disableMobile: true
+    });
+
+    flatpickr("#time", {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i",
+        time_24hr: true
+    });
+</script>
+
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+
+    if (!token) {
+        showError("Fehler: Kein gültiges Token gefunden.");
+    } else {
+        fetchUpdateInfo(token);
+    }
+
+    document.getElementById('agb').addEventListener('change', function() {
+        document.getElementById('check-time').disabled = !this.checked;
+        document.getElementById('confirm').disabled = !this.checked;
+    });
+
+    document.getElementById('check-time').addEventListener('click', function() {
+        const date = document.getElementById('date').value;
+        const time = document.getElementById('time').value;
+
+        if (!date || !time) {
+            alert("Bitte Datum und Uhrzeit wählen.");
+            return;
+        }
+
+        const formattedDateTime = `${date}`;
+
+        fetch("/api", {
+            method: "POST",
+            headers: {
+                 "Content-Type": "application/json",
+                 "Authorization": `Bearer ${token}` // 🟢 Token im Header setzen }
+                },
+            body: JSON.stringify({ action: "get_business_time", date: formattedDateTime, start_time: time })
+        })
+        .then(response => response.json())
+        .then(data => handleTimeResponse(data));
+        
+        
+    });
+
+    function fetchUpdateInfo() {
+    if (!token) {
+        showError("Kein Token gefunden. Zugriff verweigert!");
+        return;
+    }
+
+    fetch("/api", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}` // 🟢 Token im Header setzen
+        },
+        body: JSON.stringify({ action: "get_update_info" }) // 🔵 Token nicht mehr im Body senden!
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Fehler: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.detail) {
+            showError(`Fehler: ${data.detail}`);
+        } else {
+            document.getElementById('update-info').innerHTML = 
+                `<strong>Update:</strong> ${data.title}<br>${data.description}`;
+
+            if (data.date_is_set) {
+                showExistingDateModal(data.selected_date);
+            }
+        }
+    })
+    .catch(error => {
+        console.error("Fehler beim Abrufen der Update-Info:", error);
+        showError("Interner Fehler. Bitte versuchen Sie es später erneut.");
+    });
+}
+
+    function showError(message) {
+        document.getElementById("main-container").innerHTML = `
+            <h1>Fehlermeldung</h1>
+            <p>${message}</p>
+        `;
+    }
+
+    function showExistingDateModal(selectedDate) {
+        
+       let = formattedDate = formatDateTime(selectedDate);
+
+        document.getElementById("existing-date-text").innerHTML = 
+            `Sie haben bereits einen Termin am:<br><br><strong>${formattedDate}</strong><br><br>Was möchten Sie tun?`;
+        document.getElementById("existing-date-modal").style.display = "flex";
+        
+
+        document.getElementById("keep-date").addEventListener("click", function() {
+            document.getElementById("existing-date-modal").style.display = "none";
+            
+            document.getElementById("main-container").classList.add ("center-box");   
+            document.getElementById("main-container").innerHTML = `
+               <h1>Ihr Termin ist bereits gesetzt</h1>
+               <p>Sie können das Fenster jetzt schließen.</p>`;
+        });
+
+        document.getElementById("change-date").addEventListener("click", function() {
+            document.getElementById("existing-date-modal").style.display = "none";
+        });
+    }
+
+    // ✅ Fix für den "Überprüfen"-Button
+    
+
+    
+
+    function handleTimeResponse(data) {
+        const responseBox = document.getElementById('response-message');
+        responseBox.classList.remove('hidden');
+
+        let extraCost = data.extra_cost ? `${data.extra_cost} €` : "Keine Zusatzkosten";
+
+        if (data.requested_time.valid_timeframe) {
+            responseBox.innerHTML = "✅ Ihr Termin kann gebucht werden, bitte bestätigen.";
+            showConfirmButtons(true);
+        } else {
+            responseBox.innerHTML = `
+                ⚠ Ihr gewähltes Zeitfenster liegt außerhalb der regulären Öffnungszeiten.<br>
+                <strong>Zusätzliche Kosten:</strong> ${extraCost}<br>
+                Möchten Sie den Termin trotzdem buchen oder lieber einen neuen Termin wählen?`;
+            showConfirmButtons(false);
+        }
+    }
+
+    function showConfirmButtons(valid) {
+    const confirmBtn = document.getElementById('confirm');
+    const editBtn = document.getElementById('edit');
+    const contactBtn = document.getElementById('contact');
+
+    confirmBtn.classList.remove('hidden');
+    editBtn.classList.remove('hidden');
+
+    if (!valid) {
+        contactBtn.classList.remove('hidden');
+    } else {
+        contactBtn.classList.add('hidden');
+    }
+
+    // **Neue Event Listener setzen, nachdem die Buttons sichtbar sind**
+    confirmBtn.addEventListener('click', confirmAppointment);
+    editBtn.addEventListener('click', editAppointment);
+    contactBtn.addEventListener('click', contactSupport);
+}
+
+function confirmAppointment() {
+    const date = document.getElementById('date').value;
+    const time = document.getElementById('time').value;
+    const note = document.getElementById('note').value;
+
+    fetch("/api", {
+        method: "POST",
+        headers: {
+             "Content-Type": "application/json",
+             "Authorization": `Bearer ${token}` // 🟢 Token im Header setzen 
+             },
+        
+        body: JSON.stringify({ 
+            action: "select_date", 
+            selected_date: `${date}T${time}:00`, 
+            note: note 
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message || "Termin gespeichert!");
+        document.body.innerHTML = `
+            <div class="center-box">
+                <h1>Termin wurde übermittelt</h1>
+                <p>Sie können die Seite jetzt schließen.</p>
+            </div>
+        `;
+    });
+}
+
+function editAppointment() {
+    document.getElementById('response-message').classList.add('hidden');
+    document.getElementById('confirm').classList.add('hidden');
+    document.getElementById('edit').classList.add('hidden');
+    document.getElementById('contact').classList.add('hidden');
+}
+
+function contactSupport() {
+    alert("Bitte kontaktieren Sie uns unter:\n📧 support@example.com\n📞 +49 123 456 789");
+}
+
+function formatDateTime(isoString) {
+    const date = new Date(isoString);
+
+    // Datum extrahieren
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Monate sind 0-basiert
+    const year = date.getFullYear();
+
+    // Uhrzeit extrahieren
+    const hours = date.getHours();
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+
+    return `${day}.${month}.${year} um ${hours}:${minutes}:${seconds} Uhr`;
+}
+</script>
+
+
+
+</body>
+</html>
